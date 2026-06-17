@@ -38,16 +38,28 @@ function Chip({
 export function MatchesBrowser({ matches }: { matches: Match[] }) {
   const [status, setStatus] = useState<StatusFilter>("all");
   const [group, setGroup] = useState<GroupId | "all">("all");
+  const [date, setDate] = useState<string>("all");
+
+  // Fechas disponibles (clave de día + etiqueta legible), en orden.
+  const dates = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const m of matches) {
+      const k = dayKey(m.kickoff);
+      if (!map.has(k)) map.set(k, formatLongDate(m.kickoff));
+    }
+    return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [matches]);
 
   const filtered = useMemo(() => {
     return matches.filter((m) => {
       if (group !== "all" && m.group !== group) return false;
+      if (date !== "all" && dayKey(m.kickoff) !== date) return false;
       if (status === "all") return true;
       if (status === "live")
         return m.status === "live" || m.status === "halftime";
       return m.status === status;
     });
-  }, [matches, status, group]);
+  }, [matches, status, group, date]);
 
   // Agrupa por día del torneo
   const byDay = useMemo(() => {
@@ -91,6 +103,25 @@ export function MatchesBrowser({ matches }: { matches: Match[] }) {
               {g}
             </Chip>
           ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="date-filter" className="text-sm text-muted">
+            Fecha:
+          </label>
+          <select
+            id="date-filter"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground capitalize focus:border-pitch focus:outline-none"
+          >
+            <option value="all">Todas las fechas</option>
+            {dates.map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

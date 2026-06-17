@@ -1,7 +1,14 @@
 import "server-only";
 import { HIGHLIGHTS, matchKey } from "./highlights";
 import { dayKey } from "./format";
-import type { GroupStanding, Match, Stage, Team, TopScorer } from "./types";
+import type {
+  GroupStanding,
+  Match,
+  Scorer,
+  Stage,
+  Team,
+  TopScorer,
+} from "./types";
 import {
   fetchLiveMatches,
   fetchLiveStandings,
@@ -10,6 +17,7 @@ import {
 } from "./api-football";
 import {
   fetchFdMatches,
+  fetchFdScorers,
   fetchFdStandings,
   fetchFdTeams,
   isFootballDataEnabled,
@@ -74,6 +82,48 @@ function withHighlights(matches: Match[]): Match[] {
   });
 }
 
+// Mapa de enriquecimiento desde el snapshot (sede, ciudad y goleadores por
+// partido), que football-data no entrega en su plan gratis. Se calcula una vez.
+let enrichCache: Map<
+  string,
+  { venue: string; city: string; scorers?: Scorer[] }
+> | null = null;
+
+async function enrichmentMap() {
+  if (enrichCache) return enrichCache;
+  const snap = await snapMatches();
+  const map = new Map<
+    string,
+    { venue: string; city: string; scorers?: Scorer[] }
+  >();
+  for (const m of snap) {
+    map.set(matchKey(m.home.code, m.away.code), {
+      venue: m.venue,
+      city: m.city,
+      scorers: m.scorers,
+    });
+  }
+  enrichCache = map;
+  return map;
+}
+
+/** Completa sede y goleadores por partido desde el snapshot si la fuente no los trae. */
+function enrich(
+  matches: Match[],
+  map: Map<string, { venue: string; city: string; scorers?: Scorer[] }>,
+): Match[] {
+  return matches.map((m) => {
+    const e = map.get(matchKey(m.home.code, m.away.code));
+    if (!e) return m;
+    return {
+      ...m,
+      venue: m.venue || e.venue,
+      city: m.city || e.city,
+      scorers: m.scorers && m.scorers.length ? m.scorers : e.scorers,
+    };
+  });
+}
+
 export async function getTeams(): Promise<Team[]> {
   const live = await activeProvider().teams();
   return live ?? (await snapTeams());
@@ -81,7 +131,9 @@ export async function getTeams(): Promise<Team[]> {
 
 export async function getMatches(): Promise<Match[]> {
   const live = await activeProvider().matches();
-  return withHighlights(live ?? (await snapMatches()));
+  if (!live) return withHighlights(await snapMatches());
+  const enriched = enrich(live, await enrichmentMap());
+  return withHighlights(enriched);
 }
 
 export async function getStandings(): Promise<GroupStanding[]> {
@@ -168,6 +220,13 @@ export async function getKnockoutRounds(): Promise<
 
 /** Tabla de goleadores del torneo, agregando los goles de cada partido. */
 export async function getTopScorers(limit = 20): Promise<TopScorer[]> {
+  // football-data expone una tabla de goleadores oficial (en vivo) en su plan
+  // gratis; se prefiere sobre la agregación de goleadores por partido.
+  if (isFootballDataEnabled()) {
+    const fd = await fetchFdScorers(limit);
+    if (fd && fd.length) return fd.slice(0, limit);
+  }
+
   const matches = await getMatches();
   const tally = new Map<string, TopScorer>();
 

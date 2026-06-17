@@ -7,6 +7,7 @@ import type {
   MatchStatus,
   Stage,
   Team,
+  TopScorer,
 } from "./types";
 import { nameES } from "./team-names-es";
 
@@ -153,4 +154,19 @@ export async function fetchFdStandings(): Promise<GroupStanding[] | null> {
   const teams = await fetchFdTeams();
   if (!matches || !teams) return null;
   return computeStandings(teams, matches);
+}
+
+/** Tabla de goleadores del torneo (endpoint /scorers, incluido en el plan gratis). */
+export async function fetchFdScorers(limit = 30): Promise<TopScorer[] | null> {
+  const data = await apiGet<{ scorers?: any[] }>(
+    `competitions/${COMPETITION}/scorers?limit=${limit}`,
+  );
+  if (!data?.scorers?.length) return null;
+  return data.scorers
+    .map((s) => ({
+      player: s.player?.name ?? "",
+      team: mapTeam(s.team),
+      goals: s.goals ?? 0,
+    }))
+    .filter((s) => s.player && s.goals > 0);
 }
