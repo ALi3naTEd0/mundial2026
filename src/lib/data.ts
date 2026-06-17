@@ -2,6 +2,7 @@ import "server-only";
 import { MOCK_MATCHES, TEAMS } from "./mock-data";
 import { computeStandings } from "./standings";
 import { HIGHLIGHTS } from "./highlights";
+import { dayKey } from "./format";
 import type { GroupStanding, Match, Stage, Team, TopScorer } from "./types";
 import {
   fetchLiveMatches,
@@ -127,6 +128,19 @@ export async function getFinishedMatches(): Promise<Match[]> {
 export async function getHighlights(): Promise<Match[]> {
   const matches = await getFinishedMatches();
   return matches.filter((m) => m.highlightYoutubeId);
+}
+
+/**
+ * Feed de la sección Resúmenes (orden cronológico, del más viejo al nuevo):
+ * todos los partidos finalizados + todos los de HOY (en vivo o por jugar),
+ * para que aparezcan con placeholder y se les pueda enlazar el video luego.
+ */
+export async function getHighlightFeed(): Promise<Match[]> {
+  const matches = await getMatches();
+  const today = dayKey(new Date().toISOString());
+  return matches
+    .filter((m) => m.status === "finished" || dayKey(m.kickoff) === today)
+    .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
 }
 
 const KNOCKOUT_ORDER: Stage[] = [
