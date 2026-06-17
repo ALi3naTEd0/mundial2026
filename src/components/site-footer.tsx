@@ -6,7 +6,7 @@ export function SiteFooter() {
           🏆 Mundial 2026 · México · Estados Unidos · Canadá
         </p>
         <p>
-          Datos de demostración · Dashboard no oficial
+          Datos en vivo vía football-data.org · Dashboard no oficial
         </p>
       </div>
     </footer>

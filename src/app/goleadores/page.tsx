@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTopScorers } from "@/lib/data";
+import { getTopScorers, getMatches } from "@/lib/data";
 import { TeamFlag } from "@/components/team-flag";
 
 export const metadata: Metadata = {
@@ -10,8 +10,18 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function GoleadoresPage() {
-  const scorers = await getTopScorers(30);
+  const [scorers, matches] = await Promise.all([
+    getTopScorers(30),
+    getMatches(),
+  ]);
   const max = scorers[0]?.goals ?? 1;
+  const totalGoals = matches.reduce(
+    (sum, m) => sum + (m.homeScore ?? 0) + (m.awayScore ?? 0),
+    0,
+  );
+  const playedWithGoals = matches.filter(
+    (m) => m.status === "finished",
+  ).length;
 
   return (
     <div>
@@ -20,6 +30,20 @@ export default async function GoleadoresPage() {
         <p className="text-muted mt-1">
           Máximos artilleros del torneo · la Bota de Oro en disputa.
         </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <div className="card px-4 py-2.5">
+            <span className="text-2xl font-bold tabular-nums text-pitch">
+              {totalGoals}
+            </span>
+            <span className="ml-2 text-sm text-muted">goles en el torneo</span>
+          </div>
+          <div className="card px-4 py-2.5">
+            <span className="text-2xl font-bold tabular-nums">
+              {playedWithGoals}
+            </span>
+            <span className="ml-2 text-sm text-muted">partidos jugados</span>
+          </div>
+        </div>
       </header>
 
       {scorers.length === 0 ? (
