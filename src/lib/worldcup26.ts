@@ -29,23 +29,32 @@ import { nameES } from "./team-names-es";
 
 const BASE = process.env.WORLDCUP26_BASE ?? "https://worldcup26.ir";
 const REVALIDATE = 60; // cache 60s; refresca marcadores en vivo con frecuencia
-const TIMEOUT_MS = 6000; // falla rápido al mock si el host tarda
+const TIMEOUT_MS = 6000; // por intento
+const ATTEMPTS = 3; // reintentos ante fallos intermitentes del host
 
 export function isWorldcup26Enabled(): boolean {
   return process.env.DATA_SOURCE !== "mock";
 }
 
 async function apiGet<T>(path: string): Promise<T | null> {
-  try {
-    const res = await fetch(`${BASE}/${path}`, {
-      next: { revalidate: REVALIDATE },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as T;
-  } catch {
-    return null;
+  // El host falla de forma intermitente (ECONNRESET, página de error HTML).
+  // Reintenta un par de veces antes de rendirse, así evitamos caer al mock
+  // por un fallo transitorio.
+  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(`${BASE}/${path}`, {
+        next: { revalidate: REVALIDATE },
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (res.ok) return (await res.json()) as T;
+    } catch {
+      // reintentar
+    }
+    if (attempt < ATTEMPTS - 1) {
+      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+    }
   }
+  return null;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -143,6 +152,10 @@ interface Bundle {
   groups: any[];
 }
 
+// Último bundle bueno (en memoria del proceso). Si una recarga falla, se
+// sirve este en lugar de caer al mock — el sitio mantiene datos reales.
+let lastGoodBundle: Bundle | null = null;
+
 async function loadBundle(): Promise<Bundle | null> {
   const [teamsRes, gamesRes, stadiumsRes, groupsRes] = await Promise.all([
     apiGet<{ teams?: any[] }>("get/teams"),
@@ -151,7 +164,10 @@ async function loadBundle(): Promise<Bundle | null> {
     apiGet<{ groups?: any[] }>("get/groups"),
   ]);
 
-  if (!teamsRes?.teams?.length || !gamesRes?.games?.length) return null;
+  // Si esta vez no llegaron equipos o partidos, devuelve el último bueno.
+  if (!teamsRes?.teams?.length || !gamesRes?.games?.length) {
+    return lastGoodBundle;
+  }
 
   const teams = new Map<number, Team>();
   for (const t of teamsRes.teams) {
@@ -172,7 +188,13 @@ async function loadBundle(): Promise<Bundle | null> {
     });
   }
 
-  return { teams, stadiums, games: gamesRes.games, groups: groupsRes?.groups ?? [] };
+  lastGoodBundle = {
+    teams,
+    stadiums,
+    games: gamesRes.games,
+    groups: groupsRes?.groups ?? [],
+  };
+  return lastGoodBundle;
 }
 
 function bundleToMatches(b: Bundle): Match[] {

@@ -159,16 +159,6 @@ const ROUNDS: [number, number][][] = [
 // Día base (de junio) de cada jornada. Hoy (17 jun) cae en J2.
 const MATCHDAY_BASE_DAY = [11, 17, 23];
 
-// Pool de IDs de YouTube (PLACEHOLDER — reemplázalos por los resúmenes reales).
-const HIGHLIGHT_POOL = [
-  "1La4QzGeaaQ",
-  "3pXVtuc9j1Q",
-  "0J2QdDbelmY",
-  "9bZkp7q19f0",
-  "kXYiU_JCYtU",
-  "L_jWHffIx5E",
-];
-
 function statusFor(kickoff: Date): { status: MatchStatus; minute?: number } {
   const FULL_MIN = 95;
   const diffMin = (MOCK_NOW.getTime() - kickoff.getTime()) / 60000;
@@ -205,13 +195,9 @@ function buildGroupStage(): Match[] {
 
         let homeScore: number | null = null;
         let awayScore: number | null = null;
-        let highlightYoutubeId: string | undefined;
 
         if (status !== "scheduled") {
           [homeScore, awayScore] = scoreFor(matchSeed);
-        }
-        if (status === "finished") {
-          highlightYoutubeId = HIGHLIGHT_POOL[matchSeed % HIGHLIGHT_POOL.length];
         }
 
         matches.push({
@@ -227,7 +213,6 @@ function buildGroupStage(): Match[] {
           away: { ...seeds[aIdx], ...away },
           homeScore,
           awayScore,
-          highlightYoutubeId,
         });
       });
     });
