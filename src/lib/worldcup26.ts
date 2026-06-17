@@ -145,11 +145,41 @@ function parseKickoff(local: string): string {
   return `${yyyy}-${mm}-${dd}T${hh}:${min}:00-06:00`;
 }
 
-interface Bundle {
+export interface Bundle {
   teams: Map<number, Team>;
   stadiums: Map<number, { venue: string; city: string }>;
   games: any[];
   groups: any[];
+}
+
+// Construye el Bundle (mapas) a partir de los arreglos crudos de la API.
+// Reutilizable tanto por el fetch en vivo como por el snapshot local.
+export function buildBundle(
+  teamsArr: any[],
+  gamesArr: any[],
+  stadiumsArr: any[],
+  groupsArr: any[],
+): Bundle {
+  const teams = new Map<number, Team>();
+  for (const t of teamsArr) {
+    teams.set(toInt(t.id), {
+      id: toInt(t.id),
+      name: nameES(t.fifa_code, t.name_en ?? ""),
+      code: t.fifa_code ?? "",
+      flag: t.flag ?? "", // URL (TeamFlag detecta http)
+      group: (t.groups ?? "A") as GroupId,
+    });
+  }
+
+  const stadiums = new Map<number, { venue: string; city: string }>();
+  for (const s of stadiumsArr) {
+    stadiums.set(toInt(s.id), {
+      venue: s.name_en ?? s.fifa_name ?? "",
+      city: s.city_en ?? "",
+    });
+  }
+
+  return { teams, stadiums, games: gamesArr, groups: groupsArr };
 }
 
 // Último bundle bueno (en memoria del proceso). Si una recarga falla, se
@@ -169,35 +199,16 @@ async function loadBundle(): Promise<Bundle | null> {
     return lastGoodBundle;
   }
 
-  const teams = new Map<number, Team>();
-  for (const t of teamsRes.teams) {
-    teams.set(toInt(t.id), {
-      id: toInt(t.id),
-      name: nameES(t.fifa_code, t.name_en ?? ""),
-      code: t.fifa_code ?? "",
-      flag: t.flag ?? "", // URL (TeamFlag detecta http)
-      group: (t.groups ?? "A") as GroupId,
-    });
-  }
-
-  const stadiums = new Map<number, { venue: string; city: string }>();
-  for (const s of stadiumsRes?.stadiums ?? []) {
-    stadiums.set(toInt(s.id), {
-      venue: s.name_en ?? s.fifa_name ?? "",
-      city: s.city_en ?? "",
-    });
-  }
-
-  lastGoodBundle = {
-    teams,
-    stadiums,
-    games: gamesRes.games,
-    groups: groupsRes?.groups ?? [],
-  };
+  lastGoodBundle = buildBundle(
+    teamsRes.teams,
+    gamesRes.games,
+    stadiumsRes?.stadiums ?? [],
+    groupsRes?.groups ?? [],
+  );
   return lastGoodBundle;
 }
 
-function bundleToMatches(b: Bundle): Match[] {
+export function bundleToMatches(b: Bundle): Match[] {
   return b.games
     .map((g): Match | null => {
       const home = b.teams.get(toInt(g.home_team_id));
@@ -230,7 +241,7 @@ function bundleToMatches(b: Bundle): Match[] {
 }
 
 /** Usa los standings oficiales que entrega la API (con sus desempates). */
-function bundleToStandings(b: Bundle): GroupStanding[] {
+export function bundleToStandings(b: Bundle): GroupStanding[] {
   const result: GroupStanding[] = [];
   for (const g of b.groups) {
     const group = String(g.name ?? "").toUpperCase() as GroupId;

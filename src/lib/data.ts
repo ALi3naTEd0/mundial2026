@@ -1,7 +1,5 @@
 import "server-only";
-import { MOCK_MATCHES, TEAMS } from "./mock-data";
-import { computeStandings } from "./standings";
-import { HIGHLIGHTS } from "./highlights";
+import { HIGHLIGHTS, matchKey } from "./highlights";
 import { dayKey } from "./format";
 import type { GroupStanding, Match, Stage, Team, TopScorer } from "./types";
 import {
@@ -16,23 +14,19 @@ import {
   fetchFdTeams,
   isFootballDataEnabled,
 } from "./football-data";
-import {
-  fetchWcMatches,
-  fetchWcStandings,
-  fetchWcTeams,
-  isWorldcup26Enabled,
-} from "./worldcup26";
+import { fetchWcMatches, fetchWcStandings, fetchWcTeams } from "./worldcup26";
+import { snapMatches, snapStandings, snapTeams } from "./snapshot";
 
 /**
- * Única superficie de datos que consume la UI. Decide la fuente y la UI nunca
+ * Única superficie de datos que consume la UI. Decide la fuente; la UI nunca
  * sabe cuál es. Prioridad:
  *   1. football-data.org   (si hay FOOTBALL_DATA_TOKEN)
  *   2. API-Football        (si hay FOOTBALL_API_KEY)
- *   3. worldcup26.ir       (API abierta, sin key — fuente por defecto)
- *   4. Datos mock          (fallback; o si DATA_SOURCE=mock)
+ *   3. worldcup26.ir EN VIVO (solo si DATA_SOURCE=live; NO funciona en Vercel)
+ *   4. Snapshot local      (POR DEFECTO — confiable, sin red en runtime)
  *
- * Si el proveedor activo falla o devuelve vacío, se cae al mock — el sitio
- * nunca se rompe.
+ * Si el proveedor activo falla, se cae al snapshot (datos reales), nunca a
+ * datos inventados. El snapshot se refresca con `node scripts/snapshot.mjs`.
  */
 
 interface Provider {
@@ -41,7 +35,13 @@ interface Provider {
   standings: () => Promise<GroupStanding[] | null>;
 }
 
-function activeProvider(): Provider | null {
+const snapshotProvider: Provider = {
+  matches: snapMatches,
+  teams: snapTeams,
+  standings: snapStandings,
+};
+
+function activeProvider(): Provider {
   if (isFootballDataEnabled()) {
     return {
       matches: fetchFdMatches,
@@ -56,36 +56,37 @@ function activeProvider(): Provider | null {
       standings: fetchLiveStandings,
     };
   }
-  if (isWorldcup26Enabled()) {
+  if (process.env.DATA_SOURCE === "live") {
     return {
       matches: fetchWcMatches,
       teams: fetchWcTeams,
       standings: fetchWcStandings,
     };
   }
-  return null;
+  return snapshotProvider;
+}
+
+/** Inyecta el ID de YouTube del resumen (por pareja de equipos) en cada partido. */
+function withHighlights(matches: Match[]): Match[] {
+  return matches.map((m) => {
+    const yt = HIGHLIGHTS[matchKey(m.home.code, m.away.code)];
+    return yt ? { ...m, highlightYoutubeId: yt } : m;
+  });
 }
 
 export async function getTeams(): Promise<Team[]> {
-  const live = await activeProvider()?.teams();
-  return live ?? TEAMS;
-}
-
-/** Inyecta el ID de YouTube del resumen (mapa manual) en cada partido. */
-function withHighlights(matches: Match[]): Match[] {
-  return matches.map((m) =>
-    HIGHLIGHTS[m.id] ? { ...m, highlightYoutubeId: HIGHLIGHTS[m.id] } : m,
-  );
+  const live = await activeProvider().teams();
+  return live ?? (await snapTeams());
 }
 
 export async function getMatches(): Promise<Match[]> {
-  const live = await activeProvider()?.matches();
-  return withHighlights(live ?? MOCK_MATCHES);
+  const live = await activeProvider().matches();
+  return withHighlights(live ?? (await snapMatches()));
 }
 
 export async function getStandings(): Promise<GroupStanding[]> {
-  const live = await activeProvider()?.standings();
-  return live ?? computeStandings(TEAMS, MOCK_MATCHES);
+  const live = await activeProvider().standings();
+  return live ?? (await snapStandings());
 }
 
 export async function getMatchById(id: number): Promise<Match | null> {
