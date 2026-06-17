@@ -30,6 +30,7 @@ export const HIGHLIGHTS: Record<string, string> = {
   "ARG-ALG": "94AO9wbDSpM", // Argentina vs Argelia
   "AUT-JOR": "8f4ZZyRTzvs", // Austria vs Jordania
   "POR-COD": "8RKlFdSbnMU", // Portugal vs RD Congo
+  "ENG-CRO": "XvhHEEEEA78", // Inglaterra vs Croacia
 };
 
 /** Clave de un partido para buscar su resumen: códigos FIFA "LOCAL-VISITANTE". */
