@@ -34,6 +34,9 @@ export const HIGHLIGHTS: Record<string, string> = {
   "GHA-PAN": "e1rFFv9tOgo", // Ghana vs Panamá
   "UZB-COL": "4RnE5-Do1QY", // Uzbekistán vs Colombia
   "CZE-RSA": "qnCKpAElRFU", // Chequia vs Sudáfrica
+  "SUI-BIH": "ViKvPYn2weM", // Suiza vs Bosnia y Herzegovina
+  "CAN-QAT": "", // Canadá vs Catar
+  "MEX-KOR": "", // México vs Corea del Sur
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
