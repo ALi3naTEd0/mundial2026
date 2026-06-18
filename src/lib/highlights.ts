@@ -31,6 +31,8 @@ export const HIGHLIGHTS: Record<string, string> = {
   "AUT-JOR": "8f4ZZyRTzvs", // Austria vs Jordania
   "POR-COD": "8RKlFdSbnMU", // Portugal vs RD Congo
   "ENG-CRO": "XvhHEEEEA78", // Inglaterra vs Croacia
+  "GHA-PAN": "e1rFFv9tOgo", // Ghana vs Panamá
+  "UZB-COL": "4RnE5-Do1QY", // Uzbekistán vs Colombia
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
