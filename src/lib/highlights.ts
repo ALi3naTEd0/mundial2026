@@ -33,7 +33,25 @@ export const HIGHLIGHTS: Record<string, string> = {
   "ENG-CRO": "XvhHEEEEA78", // Inglaterra vs Croacia
 };
 
-/** Clave de un partido para buscar su resumen: códigos FIFA "LOCAL-VISITANTE". */
+/** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
 export function matchKey(homeCode: string, awayCode: string): string {
   return `${homeCode}-${awayCode}`;
+}
+
+/**
+ * Busca el resumen sin depender del orden local/visitante: prueba ambos
+ * sentidos, porque distintas fuentes pueden invertir quién es local.
+ */
+export function getHighlight(
+  homeCode: string,
+  awayCode: string,
+): string | undefined {
+  return (
+    HIGHLIGHTS[`${homeCode}-${awayCode}`] ?? HIGHLIGHTS[`${awayCode}-${homeCode}`]
+  );
+}
+
+/** Clave normalizada (orden alfabético) para emparejar sin importar el orden. */
+export function pairKey(codeA: string, codeB: string): string {
+  return [codeA, codeB].sort().join("-");
 }

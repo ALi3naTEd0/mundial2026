@@ -9,7 +9,7 @@ import type {
   Team,
   TopScorer,
 } from "./types";
-import { nameES } from "./team-names-es";
+import { canonCode, nameES } from "./team-names-es";
 
 /**
  * Integración con football-data.org (API v4).
@@ -96,7 +96,8 @@ function groupLetter(group: string | null): GroupId | undefined {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapTeam(t: any, group?: GroupId): Team {
-  const code = t.tla ?? (t.shortName ?? t.name ?? "").slice(0, 3).toUpperCase();
+  const raw = t.tla ?? (t.shortName ?? t.name ?? "").slice(0, 3).toUpperCase();
+  const code = canonCode(raw); // normaliza ISO3 -> FIFA (ej. URY -> URU)
   return {
     id: t.id,
     name: nameES(code, t.name ?? t.shortName ?? ""),

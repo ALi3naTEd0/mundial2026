@@ -1,5 +1,5 @@
 import "server-only";
-import { HIGHLIGHTS, matchKey } from "./highlights";
+import { getHighlight, pairKey } from "./highlights";
 import { dayKey } from "./format";
 import type {
   GroupStanding,
@@ -74,33 +74,40 @@ function activeProvider(): Provider {
   return snapshotProvider;
 }
 
-/** Inyecta el ID de YouTube del resumen (por pareja de equipos) en cada partido. */
+/** Inyecta el ID de YouTube del resumen (sin importar el orden) en cada partido. */
 function withHighlights(matches: Match[]): Match[] {
   return matches.map((m) => {
-    const yt = HIGHLIGHTS[matchKey(m.home.code, m.away.code)];
+    const yt = getHighlight(m.home.code, m.away.code);
     return yt ? { ...m, highlightYoutubeId: yt } : m;
   });
 }
 
+// Goleador del snapshot referenciado por CÓDIGO de equipo (no por lado), para
+// poder asignar el lado correcto aunque la fuente invierta local/visitante.
+interface EnrichEntry {
+  venue: string;
+  city: string;
+  scorers: { player: string; minute?: number; code: string }[];
+}
+
 // Mapa de enriquecimiento desde el snapshot (sede, ciudad y goleadores por
-// partido), que football-data no entrega en su plan gratis. Se calcula una vez.
-let enrichCache: Map<
-  string,
-  { venue: string; city: string; scorers?: Scorer[] }
-> | null = null;
+// partido), que football-data no entrega en su plan gratis. Clave normalizada
+// (independiente del orden). Se calcula una vez.
+let enrichCache: Map<string, EnrichEntry> | null = null;
 
 async function enrichmentMap() {
   if (enrichCache) return enrichCache;
   const snap = await snapMatches();
-  const map = new Map<
-    string,
-    { venue: string; city: string; scorers?: Scorer[] }
-  >();
+  const map = new Map<string, EnrichEntry>();
   for (const m of snap) {
-    map.set(matchKey(m.home.code, m.away.code), {
+    map.set(pairKey(m.home.code, m.away.code), {
       venue: m.venue,
       city: m.city,
-      scorers: m.scorers,
+      scorers: (m.scorers ?? []).map((s) => ({
+        player: s.player,
+        minute: s.minute,
+        code: s.side === "home" ? m.home.code : m.away.code,
+      })),
     });
   }
   enrichCache = map;
@@ -108,18 +115,23 @@ async function enrichmentMap() {
 }
 
 /** Completa sede y goleadores por partido desde el snapshot si la fuente no los trae. */
-function enrich(
-  matches: Match[],
-  map: Map<string, { venue: string; city: string; scorers?: Scorer[] }>,
-): Match[] {
+function enrich(matches: Match[], map: Map<string, EnrichEntry>): Match[] {
   return matches.map((m) => {
-    const e = map.get(matchKey(m.home.code, m.away.code));
+    const e = map.get(pairKey(m.home.code, m.away.code));
     if (!e) return m;
+    const scorers: Scorer[] =
+      m.scorers && m.scorers.length
+        ? m.scorers
+        : e.scorers.map((s) => ({
+            player: s.player,
+            minute: s.minute,
+            side: s.code === m.home.code ? "home" : "away",
+          }));
     return {
       ...m,
       venue: m.venue || e.venue,
       city: m.city || e.city,
-      scorers: m.scorers && m.scorers.length ? m.scorers : e.scorers,
+      scorers,
     };
   });
 }
