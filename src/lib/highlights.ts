@@ -35,7 +35,7 @@ export const HIGHLIGHTS: Record<string, string> = {
   "UZB-COL": "4RnE5-Do1QY", // Uzbekistán vs Colombia
   "CZE-RSA": "qnCKpAElRFU", // Chequia vs Sudáfrica
   "SUI-BIH": "ViKvPYn2weM", // Suiza vs Bosnia y Herzegovina
-  "CAN-QAT": "", // Canadá vs Catar
+  "CAN-QAT": "DXESoohf24w", // Canadá vs Catar
   "MEX-KOR": "", // México vs Corea del Sur
 };
 
