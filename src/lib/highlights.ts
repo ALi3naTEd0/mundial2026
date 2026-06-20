@@ -37,6 +37,8 @@ export const HIGHLIGHTS: Record<string, string> = {
   "SUI-BIH": "ViKvPYn2weM", // Suiza vs Bosnia y Herzegovina
   "CAN-QAT": "DXESoohf24w", // Canadá vs Catar
   "MEX-KOR": "tppq94xvleY", // México vs Corea del Sur
+  "USA-AUS": "nqQ1iLzKLHk", // Estados Unidos vs Australia
+  "SCO-MAR": "VXA3d-7SCcw", // Escocia vs Marruecos
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
