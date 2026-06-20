@@ -17,12 +17,14 @@ const KNOCKOUT_ORDER: Stage[] = [
   "final",
 ];
 
-/** Categoría de un partido para el filtro: grupo o fase. */
-function categoryOf(m: Match): { key: string; label: string } {
-  if (m.stage === "group" && m.group) {
-    return { key: `g:${m.group}`, label: `Grupo ${m.group}` };
-  }
-  return { key: `s:${m.stage}`, label: stageLabel(m.stage) };
+/** ¿El partido pertenece a la categoría seleccionada? (jornada, grupo o fase) */
+function matchInCategory(m: Match, cat: string): boolean {
+  if (cat === "all") return true;
+  const [type, val] = cat.split(":");
+  if (type === "j") return m.stage === "group" && String(m.matchday) === val;
+  if (type === "g") return m.group === val;
+  if (type === "s") return m.stage === val;
+  return true;
 }
 
 function CardMedia({ m }: { m: Match }) {
@@ -78,26 +80,30 @@ function CardScore({ m }: { m: Match }) {
 export function HighlightsBrowser({ matches }: { matches: Match[] }) {
   const [cat, setCat] = useState<string>("all");
 
-  // Opciones presentes en el feed, ordenadas: grupos A–L y luego fases.
-  const options = useMemo(() => {
-    const seen = new Map<string, string>();
+  // Opciones presentes en el feed, agrupadas por jornada, grupo y fase.
+  const { jornadas, grupos, fases } = useMemo(() => {
+    const j = new Set<number>();
+    const g = new Set<string>();
+    const s = new Set<Stage>();
     for (const m of matches) {
-      const c = categoryOf(m);
-      if (!seen.has(c.key)) seen.set(c.key, c.label);
+      if (m.stage === "group") {
+        if (m.matchday) j.add(m.matchday);
+        if (m.group) g.add(m.group);
+      } else {
+        s.add(m.stage);
+      }
     }
-    const entries = [...seen.entries()];
-    const rank = (key: string) => {
-      if (key.startsWith("g:")) return key.charCodeAt(2); // por letra de grupo
-      const stage = key.slice(2) as Stage;
-      return 1000 + KNOCKOUT_ORDER.indexOf(stage);
+    return {
+      jornadas: [...j].sort((a, b) => a - b),
+      grupos: [...g].sort(),
+      fases: KNOCKOUT_ORDER.filter((st) => s.has(st)),
     };
-    return entries.sort((a, b) => rank(a[0]) - rank(b[0]));
   }, [matches]);
 
-  const filtered = useMemo(() => {
-    if (cat === "all") return matches;
-    return matches.filter((m) => categoryOf(m).key === cat);
-  }, [matches, cat]);
+  const filtered = useMemo(
+    () => matches.filter((m) => matchInCategory(m, cat)),
+    [matches, cat],
+  );
 
   return (
     <div>
@@ -112,11 +118,33 @@ export function HighlightsBrowser({ matches }: { matches: Match[] }) {
           className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus:border-pitch focus:outline-none"
         >
           <option value="all">Todos los partidos</option>
-          {options.map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
+          {jornadas.length > 0 && (
+            <optgroup label="Por jornada">
+              {jornadas.map((j) => (
+                <option key={`j:${j}`} value={`j:${j}`}>
+                  Jornada {j}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          {grupos.length > 0 && (
+            <optgroup label="Por grupo">
+              {grupos.map((g) => (
+                <option key={`g:${g}`} value={`g:${g}`}>
+                  Grupo {g}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          {fases.length > 0 && (
+            <optgroup label="Por fase">
+              {fases.map((st) => (
+                <option key={`s:${st}`} value={`s:${st}`}>
+                  {stageLabel(st)}
+                </option>
+              ))}
+            </optgroup>
+          )}
         </select>
         <span className="text-sm text-muted">{filtered.length}</span>
       </div>

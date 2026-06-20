@@ -113,6 +113,7 @@ function mapMatch(item: any): Match {
     id: item.id,
     stage: mapStage(item.stage ?? "GROUP_STAGE"),
     group,
+    matchday: item.matchday ?? undefined,
     kickoff: item.utcDate,
     status: mapStatus(item.status ?? "SCHEDULED"),
     minute: item.minute ?? undefined,

@@ -39,6 +39,8 @@ export interface Match {
   id: number;
   stage: Stage;
   group?: GroupId;
+  /** jornada dentro de la fase de grupos (1, 2 o 3) */
+  matchday?: number;
   /** ISO 8601 con zona, ej. "2026-06-17T19:00:00-05:00" */
   kickoff: string;
   status: MatchStatus;

@@ -221,6 +221,7 @@ export function bundleToMatches(b: Bundle): Match[] {
         id: toInt(g.id),
         stage: mapStage(g.type),
         group,
+        matchday: g.matchday ? toInt(g.matchday) : undefined,
         kickoff: parseKickoff(g.local_date),
         status,
         minute,
