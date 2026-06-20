@@ -41,6 +41,8 @@ export const HIGHLIGHTS: Record<string, string> = {
   "SCO-MAR": "VXA3d-7SCcw", // Escocia vs Marruecos
   "BRA-HAI": "FgESxWljObo", // Brasil vs Haití
   "TUR-PAR": "vJLz1Y03M_k", // Turquía vs Paraguay
+  "GER-CIV": "J8-mUQhW6xI", // Alemania vs Costa de Marfil
+  "NED-SWE": "xvERpOD_Tg4", // Países Bajos vs Suecia
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
