@@ -39,6 +39,8 @@ export const HIGHLIGHTS: Record<string, string> = {
   "MEX-KOR": "tppq94xvleY", // México vs Corea del Sur
   "USA-AUS": "nqQ1iLzKLHk", // Estados Unidos vs Australia
   "SCO-MAR": "VXA3d-7SCcw", // Escocia vs Marruecos
+  "BRA-HAI": "FgESxWljObo", // Brasil vs Haití
+  "TUR-PAR": "vJLz1Y03M_k", // Turquía vs Paraguay
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
