@@ -204,7 +204,14 @@ export async function getHighlightFeed(): Promise<Match[]> {
   const matches = await getMatches();
   const today = dayKey(new Date().toISOString());
   return matches
-    .filter((m) => m.status === "finished" || dayKey(m.kickoff) === today)
+    .filter(
+      (m) =>
+        // Si ya tenemos su video, mostrarlo siempre (aunque la fuente vaya con
+        // retraso en el estado); más los finalizados y los de hoy.
+        m.highlightYoutubeId ||
+        m.status === "finished" ||
+        dayKey(m.kickoff) === today,
+    )
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff));
 }
 
