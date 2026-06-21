@@ -48,7 +48,7 @@ export const HIGHLIGHTS: Record<string, string> = {
   "ECU-CUW": "Y1SVWdbd7Fw", // Ecuador vs Curazao (Grupo E)
   "TUN-JPN": "-N9xFCOdscY", // Túnez vs Japón (Grupo F)
   "ESP-KSA": "xoPjpiaFUvY", // España vs Arabia Saudita (Grupo H)
-  "BEL-IRN": "", // Bélgica vs Irán (Grupo G)
+  "BEL-IRN": "UG0hAMDwnnk", // Bélgica vs Irán (Grupo G)
   "URU-CPV": "", // Uruguay vs Cabo Verde (Grupo H)
   "NZL-EGY": "", // Nueva Zelanda vs Egipto (Grupo G)
   "FRA-IRQ": "", // Francia vs Irak (Grupo I)
