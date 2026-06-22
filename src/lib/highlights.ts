@@ -51,7 +51,7 @@ export const HIGHLIGHTS: Record<string, string> = {
   "BEL-IRN": "UG0hAMDwnnk", // Bélgica vs Irán (Grupo G)
   "URU-CPV": "b2g89AguAYI", // Uruguay vs Cabo Verde (Grupo H)
   "NZL-EGY": "dszT6Ug8wv8", // Nueva Zelanda vs Egipto (Grupo G)
-  "ARG-AUT": "", // Argentina vs Austria (Grupo J)
+  "ARG-AUT": "xwPOolZ4UqU", // Argentina vs Austria (Grupo J)
   "FRA-IRQ": "", // Francia vs Irak (Grupo I)
   "NOR-SEN": "", // Noruega vs Senegal (Grupo I)
   "JOR-ALG": "", // Jordania vs Argelia (Grupo J)
