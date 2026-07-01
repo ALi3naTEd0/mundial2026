@@ -85,14 +85,14 @@ export const HIGHLIGHTS: Record<string, string> = {
   "PAN-ENG": "pEgvxdujnAc", // PAN vs Inglaterra (Grupo L)
   "CRO-GHA": "M7lCxwLa26g", // Croacia vs Ghana (Grupo L)
   // ── Dieciseisavos ──
-  "RSA-CAN": "", // Sudáfrica vs Canadá
-  "BRA-JPN": "", // Brasil vs Japón
-  "GER-PAR": "", // Alemania vs Paraguay
-  "NED-MAR": "", // Países Bajos vs Marruecos
-  "CIV-NOR": "", // Costa de Marfil vs Noruega
-  "FRA-SWE": "", // Francia vs Suecia
-  "MEX-ECU": "", // México vs Ecuador
-  "ENG-COD": "", // Inglaterra vs RD Congo
+  "RSA-CAN": "8jtXCl-Vx14", // Sudáfrica vs Canadá
+  "BRA-JPN": "OeC9qZsNmx8", // Brasil vs Japón
+  "GER-PAR": "PlNgIDwroD0", // Alemania vs Paraguay
+  "NED-MAR": "hfqWxrqxRi0", // Países Bajos vs Marruecos
+  "CIV-NOR": "YyYFSLdJ0DE", // Costa de Marfil vs Noruega
+  "FRA-SWE": "6kg3Lg8qMh0", // Francia vs Suecia
+  "MEX-ECU": "iCFwyDKzihA", // México vs Ecuador
+  "ENG-COD": "OKa8WiywIIY", // Inglaterra vs RD Congo
   "BEL-SEN": "", // Bélgica vs Senegal
   "USA-BIH": "", // Estados Unidos vs Bosnia y Herzegovina
   "ESP-AUT": "", // España vs Austria

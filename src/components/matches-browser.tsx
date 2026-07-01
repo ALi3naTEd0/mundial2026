@@ -1,14 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { GroupId, Match } from "@/lib/types";
+import type { GroupId, Match, Stage } from "@/lib/types";
 import { MatchCard } from "./match-card";
-import { formatLongDate, dayKey } from "@/lib/format";
+import { formatLongDate, dayKey, stageLabel } from "@/lib/format";
 
 type StatusFilter = "all" | "live" | "scheduled" | "finished";
 
 const GROUPS: GroupId[] = [
   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+];
+
+const KNOCKOUT_ORDER: Stage[] = [
+  "round32",
+  "round16",
+  "quarter",
+  "semi",
+  "third",
+  "final",
 ];
 
 function Chip({
@@ -39,6 +48,7 @@ export function MatchesBrowser({ matches }: { matches: Match[] }) {
   const [status, setStatus] = useState<StatusFilter>("all");
   const [group, setGroup] = useState<GroupId | "all">("all");
   const [date, setDate] = useState<string>("all");
+  const [phase, setPhase] = useState<string>("all");
 
   // Fechas disponibles (clave de día + etiqueta legible), en orden.
   const dates = useMemo(() => {
@@ -50,16 +60,24 @@ export function MatchesBrowser({ matches }: { matches: Match[] }) {
     return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
   }, [matches]);
 
+  // Fases de eliminatoria presentes, en orden.
+  const phases = useMemo(() => {
+    const set = new Set(matches.map((m) => m.stage));
+    return KNOCKOUT_ORDER.filter((st) => set.has(st));
+  }, [matches]);
+
   const filtered = useMemo(() => {
     return matches.filter((m) => {
       if (group !== "all" && m.group !== group) return false;
       if (date !== "all" && dayKey(m.kickoff) !== date) return false;
+      if (phase === "group" && m.stage !== "group") return false;
+      if (phase !== "all" && phase !== "group" && m.stage !== phase) return false;
       if (status === "all") return true;
       if (status === "live")
         return m.status === "live" || m.status === "halftime";
       return m.status === status;
     });
-  }, [matches, status, group, date]);
+  }, [matches, status, group, date, phase]);
 
   // Agrupa por día del torneo
   const byDay = useMemo(() => {
@@ -105,23 +123,45 @@ export function MatchesBrowser({ matches }: { matches: Match[] }) {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="date-filter" className="text-sm text-muted">
-            Fecha:
-          </label>
-          <select
-            id="date-filter"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground capitalize focus:border-pitch focus:outline-none"
-          >
-            <option value="all">Todas las fechas</option>
-            {dates.map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label htmlFor="phase-filter" className="text-sm text-muted">
+              Fase:
+            </label>
+            <select
+              id="phase-filter"
+              value={phase}
+              onChange={(e) => setPhase(e.target.value)}
+              className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground focus:border-pitch focus:outline-none"
+            >
+              <option value="all">Todas</option>
+              <option value="group">Fase de grupos</option>
+              {phases.map((st) => (
+                <option key={st} value={st}>
+                  {stageLabel(st)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="date-filter" className="text-sm text-muted">
+              Fecha:
+            </label>
+            <select
+              id="date-filter"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground capitalize focus:border-pitch focus:outline-none"
+            >
+              <option value="all">Todas las fechas</option>
+              {dates.map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
