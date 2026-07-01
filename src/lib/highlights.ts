@@ -66,24 +66,41 @@ export const HIGHLIGHTS: Record<string, string> = {
   "BIH-QAT": "tFYspnrWti0", // Bosnia y Herzegovina vs Catar (Grupo B)
   "MAR-HAI": "QYRsgIdqWtE", // Marruecos vs Haití (Grupo C)
   "SCO-BRA": "bvcLAP3oFJA", // Escocia vs Brasil (Grupo C)
-  "TUR-USA": "", // Turquía vs Estados Unidos (Grupo D)
-  "PAR-AUS": "", // Paraguay vs Australia (Grupo D)
-  "ECU-GER": "", // Ecuador vs Alemania (Grupo E)
-  "CUW-CIV": "", // Curazao vs Costa de Marfil (Grupo E)
-  "TUN-NED": "", // Túnez vs Países Bajos (Grupo F)
-  "JPN-SWE": "", // Japón vs Suecia (Grupo F)
-  "NZL-BEL": "", // Nueva Zelanda vs Bélgica (Grupo G)
-  "EGY-IRN": "", // Egipto vs Irán (Grupo G)
-  "URU-ESP": "", // Uruguay vs España (Grupo H)
-  "CPV-KSA": "", // Cabo Verde vs Arabia Saudita (Grupo H)
-  "NOR-FRA": "", // Noruega vs Francia (Grupo I)
-  "SEN-IRQ": "", // Senegal vs Irak (Grupo I)
-  "JOR-ARG": "", // Jordania vs Argentina (Grupo J)
-  "ALG-AUT": "", // Argelia vs Austria (Grupo J)
-  "COL-POR": "", // Colombia vs Portugal (Grupo K)
-  "COD-UZB": "", // RD Congo vs Uzbekistán (Grupo K)
-  "PAN-ENG": "", // PAN vs Inglaterra (Grupo L)
-  "CRO-GHA": "", // Croacia vs Ghana (Grupo L)
+  "TUR-USA": "yX1JDNyOdRs", // Turquía vs Estados Unidos (Grupo D)
+  "PAR-AUS": "ikPxnevaEiM", // Paraguay vs Australia (Grupo D)
+  "ECU-GER": "z8K-D8mqLAs", // Ecuador vs Alemania (Grupo E)
+  "CUW-CIV": "U6X9Vb5ha8o", // Curazao vs Costa de Marfil (Grupo E)
+  "TUN-NED": "m8WNqM5tCfM", // Túnez vs Países Bajos (Grupo F)
+  "JPN-SWE": "f0cPH0AaALE", // Japón vs Suecia (Grupo F)
+  "NZL-BEL": "GF1uG1SoRGo", // Nueva Zelanda vs Bélgica (Grupo G)
+  "EGY-IRN": "idAyMEYRwno", // Egipto vs Irán (Grupo G)
+  "URU-ESP": "4Y8Y6J3w0T8", // Uruguay vs España (Grupo H)
+  "CPV-KSA": "mm1lbHbZ9-Q", // Cabo Verde vs Arabia Saudita (Grupo H)
+  "NOR-FRA": "BaFhDXUASWY", // Noruega vs Francia (Grupo I)
+  "SEN-IRQ": "kMmSrPphrMs", // Senegal vs Irak (Grupo I)
+  "JOR-ARG": "jtUVvojNIsQ", // Jordania vs Argentina (Grupo J)
+  "ALG-AUT": "IxcVGvan1mM", // Argelia vs Austria (Grupo J)
+  "COL-POR": "kzjmcm4ANRo", // Colombia vs Portugal (Grupo K)
+  "COD-UZB": "kcaKXpqmoEM", // RD Congo vs Uzbekistán (Grupo K)
+  "PAN-ENG": "pEgvxdujnAc", // PAN vs Inglaterra (Grupo L)
+  "CRO-GHA": "M7lCxwLa26g", // Croacia vs Ghana (Grupo L)
+  // ── Dieciseisavos ──
+  "RSA-CAN": "", // Sudáfrica vs Canadá
+  "BRA-JPN": "", // Brasil vs Japón
+  "GER-PAR": "", // Alemania vs Paraguay
+  "NED-MAR": "", // Países Bajos vs Marruecos
+  "CIV-NOR": "", // Costa de Marfil vs Noruega
+  "FRA-SWE": "", // Francia vs Suecia
+  "MEX-ECU": "", // México vs Ecuador
+  "ENG-COD": "", // Inglaterra vs RD Congo
+  "BEL-SEN": "", // Bélgica vs Senegal
+  "USA-BIH": "", // Estados Unidos vs Bosnia y Herzegovina
+  "ESP-AUT": "", // España vs Austria
+  "POR-CRO": "", // Portugal vs Croacia
+  "SUI-ALG": "", // Suiza vs Argelia
+  "AUS-EGY": "", // Australia vs Egipto
+  "ARG-CPV": "", // Argentina vs Cabo Verde
+  "COL-GHA": "", // Colombia vs Ghana
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
