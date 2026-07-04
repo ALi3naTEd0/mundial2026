@@ -93,14 +93,20 @@ export const HIGHLIGHTS: Record<string, string> = {
   "FRA-SWE": "6kg3Lg8qMh0", // Francia vs Suecia
   "MEX-ECU": "iCFwyDKzihA", // México vs Ecuador
   "ENG-COD": "OKa8WiywIIY", // Inglaterra vs RD Congo
-  "BEL-SEN": "", // Bélgica vs Senegal
-  "USA-BIH": "", // Estados Unidos vs Bosnia y Herzegovina
-  "ESP-AUT": "", // España vs Austria
-  "POR-CRO": "", // Portugal vs Croacia
-  "SUI-ALG": "", // Suiza vs Argelia
-  "AUS-EGY": "", // Australia vs Egipto
-  "ARG-CPV": "", // Argentina vs Cabo Verde
-  "COL-GHA": "", // Colombia vs Ghana
+  "BEL-SEN": "Qkq4BEgNnCU", // Bélgica vs Senegal
+  "USA-BIH": "ih4uIIh5-YI", // Estados Unidos vs Bosnia y Herzegovina
+  "ESP-AUT": "DCxwOjPpoA0", // España vs Austria
+  "POR-CRO": "iDAv9hsBsck", // Portugal vs Croacia
+  "SUI-ALG": "sVew3589r6s", // Suiza vs Argelia
+  "AUS-EGY": "1i0d2cND820", // Australia vs Egipto
+  "ARG-CPV": "m4w14Z0tU78", // Argentina vs Cabo Verde
+  "COL-GHA": "LJarSr0GkOY", // Colombia vs Ghana
+  // ── Octavos de final ──
+  "CAN-MAR": "", // Canadá vs Marruecos
+  "PAR-FRA": "", // Paraguay vs Francia
+  "BRA-NOR": "", // Brasil vs Noruega
+  "MEX-ENG": "", // México vs Inglaterra
+  "USA-BEL": "", // Estados Unidos vs Bélgica
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
