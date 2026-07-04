@@ -102,11 +102,14 @@ export const HIGHLIGHTS: Record<string, string> = {
   "ARG-CPV": "m4w14Z0tU78", // Argentina vs Cabo Verde
   "COL-GHA": "LJarSr0GkOY", // Colombia vs Ghana
   // ── Octavos de final ──
-  "CAN-MAR": "", // Canadá vs Marruecos
+  "CAN-MAR": "hx8ddpIxgmQ", // Canadá vs Marruecos
   "PAR-FRA": "", // Paraguay vs Francia
   "BRA-NOR": "", // Brasil vs Noruega
   "MEX-ENG": "", // México vs Inglaterra
   "USA-BEL": "", // Estados Unidos vs Bélgica
+  "POR-ESP": "", // Portugal vs España
+  "ARG-EGY": "", // Argentina vs Egipto
+  "SUI-COL": "", // Suiza vs Colombia
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
