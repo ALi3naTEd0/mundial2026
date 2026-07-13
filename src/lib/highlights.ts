@@ -111,10 +111,13 @@ export const HIGHLIGHTS: Record<string, string> = {
   "ARG-EGY": "541giywzG54", // Argentina vs Egipto
   "SUI-COL": "e1JXh9_Ox9A", // Suiza vs Colombia
   // ── Cuartos de final ──
-  "FRA-MAR": "", // Francia vs Marruecos
-  "ESP-BEL": "", // España vs Bélgica
-  "NOR-ENG": "", // Noruega vs Inglaterra
-  "ARG-SUI": "", // Argentina vs Suiza
+  "FRA-MAR": "I0lcqPfHltU", // Francia vs Marruecos
+  "ESP-BEL": "U0IE1Rf3gHc", // España vs Bélgica
+  "NOR-ENG": "jfmXug0cDd4", // Noruega vs Inglaterra
+  "ARG-SUI": "E26ej5nSjZE", // Argentina vs Suiza
+  // ── Semifinales ──
+  "FRA-ESP": "", // Francia vs España
+  "ENG-ARG": "", // Inglaterra vs Argentina
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
