@@ -116,8 +116,12 @@ export const HIGHLIGHTS: Record<string, string> = {
   "NOR-ENG": "jfmXug0cDd4", // Noruega vs Inglaterra
   "ARG-SUI": "E26ej5nSjZE", // Argentina vs Suiza
   // ── Semifinales ──
-  "FRA-ESP": "", // Francia vs España
-  "ENG-ARG": "", // Inglaterra vs Argentina
+  "FRA-ESP": "eXb2cQNWeL0", // Francia vs España
+  "ENG-ARG": "rYUQmuojEiU", // Inglaterra vs Argentina
+  // ── Tercer puesto ──
+  "FRA-ENG": "", // Francia vs Inglaterra
+  // ── Final ──
+  "ESP-ARG": "", // España vs Argentina
 };
 
 /** Clave de un partido: códigos FIFA "LOCAL-VISITANTE". */
